@@ -5,7 +5,7 @@ const canvasWidth=600;
 const speed = 5;
 const ray_num = 100;
 const check = 120;
-const checkMultiplyer = 3;
+
 const RGBmultiplyer = 1.1;
 const resMult = 0.1;
 var fullScr = true;
@@ -62,6 +62,11 @@ var map = [
     [2,r(7),r(7),r(7),r(7),r(7),r(7),r(7),r(7),2],
     [2,   2,   2 ,  2,   2,   2,   2,   2,   2,2]
 ];
+
+const XcheckMultiplyer = canvasHeight/map[0].length/16;
+const YcheckMultiplyer = canvasHeight/map.length/16;
+
+
 
 function r(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -265,8 +270,8 @@ function Ray(){
                     };
                     for(var p = 0; p <= check; p++)
                     {
-                        ray.x = x + 100 * Math.cos(-(mouse.x - b) * Math.PI / 180) * ((p*checkMultiplyer)/100);
-                        ray.y = y + 100 * Math.sin(-(mouse.x - b) * Math.PI / 180) * ((p*checkMultiplyer)/100);
+                        ray.x = x + Math.cos(-(mouse.x - b) * Math.PI / 180) * p*XcheckMultiplyer;
+                        ray.y = y + Math.sin(-(mouse.x - b) * Math.PI / 180) * p*YcheckMultiplyer;
                         
                         if(pointInside(wall, ray.x, ray.y)){
                             distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall});
@@ -285,14 +290,7 @@ function Ray(){
                 MIN = distArray[i].dist;
                 dist=distArray[i];
 
-                if(b == ray_num/2){
-                    CorrDist={dist:dist.dist, wall: dist.wall};
-                }else{
-                    CorrDist={
-                        dist:Math.sqrt(dist.dist)*Math.cos(mouse.x-(b-ray_num/2)),
-                        wall: dist.wall
-                    };
-                }
+                dist.dist *= Math.cos(degToRad(Math.abs(ray_num/2-b)));
 
             }
 
@@ -315,9 +313,9 @@ function drawRay(x1,y1,x2,y2) {
 }
 
 function draw3D(dist, b) {
+
     Dcanvas.beginPath();
     
-    //dist.dist = dist.dist/Math.cos(b+ray_num/2 - ray_num);
 
     if(dist.dist<0){
         dist.dist = 0;
@@ -398,4 +396,3 @@ setInterval(drawPlayer, 20);
 //setInterval(drawMap, 15);
 setInterval(Collide, 1);
 setInterval(clearCanvas, 100);
-
