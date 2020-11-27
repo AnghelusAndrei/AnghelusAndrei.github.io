@@ -1,13 +1,600 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <title>pseudo-3D</title>
-        <meta charset="UTF-8">
-        <meta name="keywords" content="raycast">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" type="text/css" href="style.css">
-    </head>
-    <body>
-        <script src='script.js'></script>
-    </body>
+<html lang="en">
+<title>Trigonometrie si Rendering</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+body {font-family: "Lato", sans-serif}
+.mySlides {display: none}
+</style>
+<body>
+
+<div class="w3-top">
+  <div class="w3-bar w3-black w3-card">
+    <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large w3-right" href="javascript:void(0)" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+    <a href="#" class="w3-bar-item w3-button w3-padding-large">HOME</a>
+    <a href="#band" class="w3-bar-item w3-button w3-padding-large w3-hide-small">RAYCASTING</a>
+    <a href="#tour" class="w3-bar-item w3-button w3-padding-large w3-hide-small">COURSES</a>
+    <a href="#contact" class="w3-bar-item w3-button w3-padding-large w3-hide-small">CONTACT</a>
+    <div class="w3-dropdown-hover w3-hide-small">
+      <button class="w3-padding-large w3-button" title="More">MORE <i class="fa fa-caret-down"></i></button>     
+      <div class="w3-dropdown-content w3-bar-block w3-card-4">
+        <a href="#" class="w3-bar-item w3-button">Merchandise</a>
+        <a href="#" class="w3-bar-item w3-button">Extras</a>
+        <a href="#" class="w3-bar-item w3-button">Media</a>
+      </div>
+    </div>
+    <a href="javascript:void(0)" class="w3-padding-large w3-hover-red w3-hide-small w3-right"><i class="fa fa-search"></i></a>
+  </div>
+</div>
+
+
+<div id="navDemo" class="w3-bar-block w3-black w3-hide w3-hide-large w3-hide-medium w3-top" style="margin-top:46px">
+  <a href="#band" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">BAND</a>
+  <a href="#tour" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">TOUR</a>
+  <a href="#contact" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">CONTACT</a>
+  <a href="#" class="w3-bar-item w3-button w3-padding-large" onclick="myFunction()">MERCH</a>
+</div>
+
+
+<div class="w3-content" style="max-width:2000px;margin-top:46px">
+
+ 
+  <div class="mySlides w3-display-container w3-center">
+    <img src="th.png" style="width:100%">
+    <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-32 w3-hide-small">
+      <h3>Raycasting</h3>
+      <p><b>Trigonometry Rendering Method from scratch</b></p>   
+    </div>
+  </div>
+  <div class="mySlides w3-display-container w3-center">
+    <img src="t1.png" style="width:100%">
+    <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-32 w3-hide-small">
+      <h3>2D Rendering</h3>
+      <p><b>2D Virtual World Curses</b></p>    
+    </div>
+  </div>
+  <div class="mySlides w3-display-container w3-center">
+    <img src="t2.png" style="width:100%">
+    <div class="w3-display-bottommiddle w3-container w3-text-white w3-padding-32 w3-hide-small">
+      <h3>3D Rendering</h3>
+      <p><b>3D Virtual World Curses</b></p>    
+    </div>
+  </div>
+
+  <div class="w3-container w3-content w3-center w3-padding-64" style="max-width:800px" id="band">
+    <h2 class="w3-wide">RAYCASTING</h2>
+    <p class="w3-opacity"><i>Raycasting este o metoda de a crea o perspectiva 3D intr-o lume virtuala 2D</i></p>
+    <p class="w3-justify">Mai jos puteti vedea un exemplu de perspectiva 3D creata prin raycasting, facuta in html5</p>
+
+        <canvas id="3Dcanvas" width="400" height="400" style="background-color: black;">Your browser does not support HTML5</canvas>
+
+        <p class="w3-justify">Acesta este scriptul ce face exemplul de mai sus sa functioneze:</p>
+        <p class="w3-opacity">
+          <textarea rows="6" cols="35" disabled="true">"use strict";
+            const Dc = document.getElementById("3Dcanvas");
+            
+            const canvasHeight=Dc.height;
+            const canvasWidth=Dc.width;
+            
+            const speed = 5;
+            const ray_num = 100;
+            const check = 100;
+            
+            const RGBmultiplyer = 1.1;
+            const resMult = 0.1;
+            var fullScr = true;
+            
+            
+            
+            window.onscroll=function(){window.scrollTo(window.scrollX, window.scrollY);};
+            
+            
+            const Dcanvas=document.getElementById("3Dcanvas").getContext("2d");
+            
+            Dc.requestPointerLock = Dc.requestPointerLock ||
+            Dc.mozRequestPointerLock;
+            
+            Dc.addEventListener("click", (ev)=>
+            {
+                if(fullScr == false){Dc.style.cursor = 'none';}
+                else if(fullScr == true){Dc.style.cursor = 'crosshair';}
+                openFullscreen()
+                Dc.requestPointerLock()
+                fullScr = true;
+            })
+            
+            window.addEventListener("keydown", (event)=>
+            {
+                var keyCode = event.keyCode;
+                switch(keyCode){
+                    case 27:
+                        fullScr = false;
+                    break;
+                }
+            })
+            
+            function openFullscreen() {
+                if (Dc.requestFullscreen) {
+                    Dc.requestFullscreen();
+                } else if (Dc.webkitRequestFullscreen) {
+                    Dc.webkitRequestFullscreen();
+                } else if (Dc.msRequestFullscreen) {
+                    Dc.msRequestFullscreen();
+                }
+            }
+            
+            var map = [
+                [2,   2,   2,   2,   2,     2,    2,   2,   2,2],
+                [2,r(7),r(7),r(8),r(8),  r(8), r(7),r(7),r(7),2],
+                [2,r(7),r(7),r(8),r(9),  r(9), r(8),r(7),r(7),2],
+                [2,r(7),r(8),r(9),r(10),r(10), r(9),r(8),r(7),2],
+                [2,r(8),r(9),r(10),   0,    0,r(10),r(9),r(8),2],
+                [2,r(8),r(9),r(10),   0,    0,r(10),r(9),r(8),2],
+                [2,r(7),r(8),r(9),r(10),r(10), r(9),r(8),r(7),2],
+                [2,r(7),r(7),r(8),r(9),  r(9), r(8),r(7),r(7),2],
+                [2,r(7),r(7),r(7),r(8),  r(8), r(7),r(7),r(7),2],
+                [2,   2,   2 ,  2,   2,     2,    2,   2,   2,2]
+            ];
+            
+            const XcheckMultiplyer = canvasHeight/map[0].length/16;
+            const YcheckMultiplyer = canvasHeight/map.length/16;
+            
+            
+            
+            function r(max) {
+                return Math.floor(Math.random() * Math.floor(max));
+            }
+            
+            function drawMap(){
+            const [width, height] = [map[0].length, map.length]
+            for(var i=0; i<height; i++)
+            {
+                for(var j=0;j<width;j++)
+                {
+                    if(map[i][j] >= 1 && map[i][j] <= 4){
+                        canvas.fillStyle='white';
+                        canvas.fillRect(canvasWidth / width * j, canvasHeight / height * i, canvasWidth / width,  canvasHeight / height);
+                        canvas.fill();
+                    }else{
+                        canvas.fillStyle='gray';
+                        canvas.fillRect(canvasWidth / width * j, canvasHeight / height * i, canvasWidth / width,  canvasHeight / height);
+                        canvas.fill();
+                    }
+                }
+            }
+            
+            }
+            var collider = {
+                x: x - 10,
+                y: y - 10,
+                width: 20,
+                height: 20
+            }
+            function pointInside(wall, x, y)
+            {
+                return wall.x - 6 < x && wall.x + wall.width + 6 >x && wall.y - 6 <y && wall.y + wall.height + 6 > y
+            }
+            function Collide(){
+                const [width, height] = [map[0].length, map.length];
+                for(var i=0; i<height; i++)
+                {
+                    for(var j=0;j<width;j++)
+                    {
+                        if(map[i][j] >= 1  && map[i][j] <= 4){
+                            var wall = {
+                                x: canvasWidth / width * j,
+                                y: canvasHeight / height * i,
+                                height: canvasHeight / height,
+                                width: canvasWidth / width,
+                            }
+                            
+                            if(pointInside(wall, x-5, y-5) || pointInside(wall, x-5 ,y+5) || pointInside(wall, x+5, y-5) || pointInside(wall, x+5, y+5)){
+                                x = lastX;
+                                y = lastY;
+                                tickX = x;
+                                tickY = y;
+                            }
+                    }
+                    }
+                }
+            }
+            (function() {
+                var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame ||
+                window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
+                window.requestAnimationFrame = requestAnimationFrame;
+            })();
+            
+            window.addEventListener("keydown", onKeyDown, false);
+            window.addEventListener("keyup", onKeyUp, false);
+            var x = canvasWidth / 2;
+            var y = canvasHeight / 2;
+            var radius = 10;
+            
+            function onKeyDown(event) {
+                var keyCode = event.keyCode;
+                switch (keyCode) {
+                case 68: //d
+                    keyD = true;
+                    break;
+                case 83: //s
+                    keyS = true;
+                    break;
+                case 65: //a
+                    keyA = true;
+                    break;
+                case 87: //w
+                    keyW = true;
+                    break;
+                }
+            }
+            
+            function onKeyUp(event) {
+                var keyCode = event.keyCode;
+            
+                switch (keyCode) {
+                case 68: //d
+                    keyD = false;
+                    break;
+                case 83: //s
+                    keyS = false;
+                    break;
+                case 65: //a
+                    keyA = false;
+                    break;
+                case 87: //w
+                    keyW = false;
+                    break;
+                }
+            }
+            
+            var tickX = canvasWidth / 2;
+            var tickY = canvasHeight / 2;
+            
+            var keyW = false;
+            var keyA = false;
+            var keyS = false;
+            var keyD = false;
+            
+            var lastX;
+            var lastY;
+            function drawPlayer(){
+                lastX = x;
+                lastY = y;
+                if (keyD == true) {
+                var cX = x + Math.cos(-(mouse.x - ray_num/2 - 90) * Math.PI / 180) * speed;
+                var cY = y + Math.sin(-(mouse.x - ray_num/2 - 90) * Math.PI / 180) * speed;
+                x=cX;
+                y=cY;
+                }
+                if (keyS == true) {
+                var cX = x + Math.cos(-(mouse.x - ray_num/2 - 180) * Math.PI / 180) * speed;
+                var cY = y + Math.sin(-(mouse.x - ray_num/2 - 180) * Math.PI / 180) * speed;
+                x=cX;
+                y=cY;
+                }
+                if (keyA == true) {
+                var cX = x + Math.cos(-(mouse.x - ray_num/2 + 90) * Math.PI / 180) * speed;
+                var cY = y + Math.sin(-(mouse.x - ray_num/2 + 90) * Math.PI / 180) * speed;
+                x=cX;
+                y=cY;
+                }
+                if (keyW == true) {
+                var cX = x + Math.cos(-(mouse.x - ray_num/2) * Math.PI / 180) * speed;
+                var cY = y + Math.sin(-(mouse.x - ray_num/2) * Math.PI / 180) * speed;
+                x=cX;
+                y=cY;
+                }
+            }
+            function reDoPlayer(){
+            window.requestAnimationFrame(reDoPlayer);
+            canvas.beginPath();
+            canvas.fillStyle = 'black';
+            canvas.arc(x, y, radius, 0, 2 * Math.PI, false);
+            canvas.fill();
+            }
+            
+            function Distance(x1,x2,y1,y2){
+                return Math.sqrt((x1-x2) * (x1-x2) + (y1-y2)*(y1-y2))
+            }
+                
+            function rotate(velocity, angle){
+                const rotatedVelocities = {
+                    x: velocity.x * Math.cos(angle) - velocity.y * Math.sin(angle),
+                    y: velocity.x * Math.sin(angle) + velocity.y * Math.cos(angle)
+                };
+                return rotatedVelocities;
+            }
+            let mouse = {
+            x: innerWidth / 2,
+            y: innerHeight / 2
+            }
+            
+            addEventListener("mousemove", function(event){
+                mouse.x -= event.movementX;
+                mouse.y += event.movementY;
+                
+                
+            });
+             
+            window.requestAnimationFrame(Ray);
+            
+            function Ray(){
+                window.requestAnimationFrame(Ray);
+                for(var b = 0; b < ray_num; b++)
+                {
+                    const [width, height] = [map[0].length, map.length];
+                    var distArray = [];
+                    for(var i=0; i<height; i++)
+                    {
+                        for(var j=0;j<width;j++)
+                        {
+                            if(map[i][j] > 0 && map[i][j] <= 4){
+                                var wall = {
+                                    x: canvasWidth / width * j,
+                                    y: canvasHeight / height * i,
+                                    height: canvasHeight / height,
+                                    width: canvasWidth / width,
+                                    color: map[i][j]
+                                };
+                                var ray = {
+                                x,
+                                y
+                                };
+                                var found = false;
+                                if(found==false){
+                                    for(var p = 0; p <= check; p++)
+                                    {
+                                        ray.x = x + Math.cos(-(mouse.x - b) * Math.PI / 180) * p*XcheckMultiplyer;
+                                        ray.y = y + Math.sin(-(mouse.x - b) * Math.PI / 180) * p*YcheckMultiplyer;
+                                    
+                                        if(pointInside(wall, ray.x, ray.y)){
+                                            found = true;
+                                            distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall});
+                                       }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    var dist,CorrDist;
+                    var MIN=999999;
+                    for(var i=0;i<distArray.length;i++)
+                    {
+                        if(distArray[i].dist<MIN) 
+                        {
+                            MIN = distArray[i].dist;
+                            dist=distArray[i];
+            
+                            dist.dist *= Math.cos(degToRad(Math.abs(ray_num/2-b)));
+            
+                        }
+            
+                    }
+            
+            
+                    draw3D(dist, b);
+                }
+            }
+            
+            
+            
+            function drawRay(x1,y1,x2,y2) {
+                canvas.beginPath();
+                canvas.strokeStyle = 'red';
+                canvas.moveTo(x1,y1);
+                canvas.lineTo(x2,y2);   
+                canvas.stroke();
+            }
+            
+            function draw3D(dist, b) {
+            
+                Dcanvas.beginPath();
+                
+            
+                if(dist.dist<0){
+                    dist.dist = 0;
+                }else if(dist.dist>(canvasHeight/2)){
+                    dist.dist = (canvasHeight/2);
+                }
+                var Rdist = 255-dist.dist/RGBmultiplyer;
+                
+                if(Rdist<0){
+                    Rdist = 0;
+                }
+            
+                
+                var Sdist = Rdist.toString();
+                switch(dist.wall.color)
+                {
+                    case 1:Dcanvas.fillStyle = `rgb(${Sdist},0,0)`;
+                    break;
+                    case 2:Dcanvas.fillStyle = `rgb(0,${Sdist},0)`;
+                    break;
+                    case 3:Dcanvas.fillStyle = `rgb(0,0,${Sdist})`;
+                    break;
+                    case 4:Dcanvas.fillStyle = `rgb(${Sdist},${Sdist},${Sdist})`;
+                    break;
+                }
+                
+                
+                Dcanvas.fillRect((
+                  canvasWidth/ray_num) * b,
+                  canvasHeight/2+dist.dist/2,
+                  canvasWidth/ray_num,
+                  canvasHeight/2-dist.dist);
+            
+                Dcanvas.fill();
+            }
+            
+            
+            function arrayMin(arr) { return Math.min.apply(Math, arr); }
+            function arrayMax(arr) { return Math.max.apply(Math, arr); }
+            function FixAng(a){ if(a>360){ a-=361;} if(a<1){ a+=361;} return a;}
+            function distance(ax,ay,bx,by,ang){ return Math.cos(Math.degToRad(ang))*(bx-ax)-sin(Math.degToRad(ang))*(by-ay);}
+            function degToRad(degrees){var pi = Math.PI;return degrees * (pi/180);}
+            
+            
+            function clearCanvas(){
+                Dcanvas.beginPath();
+                Dcanvas.fillStyle = 'black';
+                Dcanvas.fillRect(0, 0, canvasWidth, canvasHeight);
+                Dcanvas.fill();
+            }
+            
+            function CPoints(angle, radius, distance){
+                return {
+                    x: x + radius * Math.cos(angle * Math.PI / 180) * distance,
+                    y: y + radius * Math.sin(angle * Math.PI / 180) * distance
+                }
+            }
+            
+            
+            setInterval(drawPlayer, 20);
+            setInterval(Collide, 20);
+            setInterval(clearCanvas, 100);</textarea>
+        </p>
+  </div>
+
+  <script src="script.js"></script>
+
+  <div class="w3-black" id="tour">
+    <div class="w3-container w3-content w3-padding-64" style="max-width:800px">
+      <h2 class="w3-wide w3-center">CURSURI</h2>
+      <p class="w3-opacity w3-center"><i>Remember to book your tickets!</i></p><br>
+
+      <ul class="w3-ul w3-border w3-white w3-text-grey">
+        <li class="w3-padding">2D Rendering <span class="w3-tag w3-red w3-margin-left">Sold out</span></li>
+        <li class="w3-padding">3D Rendering <span class="w3-tag w3-red w3-margin-left">Sold out</span></li>
+        <li class="w3-padding">javascript <span class="w3-badge w3-right w3-margin-right">3</span></li>
+      </ul>
+
+      <div class="w3-row-padding w3-padding-32" style="margin:0 -16px">
+        <div class="w3-third w3-margin-bottom">
+          
+          <div class="w3-container w3-white">
+            <p><b>2D Rendering</b></p>
+            <p class="w3-opacity">a detailed course about 2D virtual worlds</p>
+            <p>You should buy</p>
+            <button class="w3-button w3-black w3-margin-bottom" onclick="document.getElementById('ticketModal').style.display='block'">Buy Tickets</button>
+          </div>
+        </div>
+        <div class="w3-third w3-margin-bottom">
+          <div class="w3-container w3-white">
+            <p><b>3D Rendering</b></p>
+            <p class="w3-opacity">a detailed course about 3D virtual worlds</p>
+            <p>You should buy</p>
+            <button class="w3-button w3-black w3-margin-bottom" onclick="document.getElementById('ticketModal').style.display='block'">Buy Tickets</button>
+          </div>
+        </div>
+        <div class="w3-third w3-margin-bottom">
+          
+          <div class="w3-container w3-white">
+            <p><b>javascript</b></p>
+            <p class="w3-opacity">a detailed course about javascript</p>
+            <p>WARNING!BUY NOW</p>
+            <button class="w3-button w3-black w3-margin-bottom" onclick="document.getElementById('ticketModal').style.display='block'">Buy Tickets</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="ticketModal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-top w3-card-4">
+      <header class="w3-container w3-teal w3-center w3-padding-32"> 
+        <span onclick="document.getElementById('ticketModal').style.display='none'" 
+       class="w3-button w3-teal w3-xlarge w3-display-topright">×</span>
+        <h2 class="w3-wide"><i class="fa fa-suitcase w3-margin-right"></i>Tickets</h2>
+      </header>
+      <div class="w3-container">
+        <p><label><i class="fa fa-shopping-cart"></i> COURSES, $15 per person</label></p>
+        <input class="w3-input w3-border" type="text" placeholder="How many?">
+        <p><label><i class="fa fa-user"></i> Send To</label></p>
+        <input class="w3-input w3-border" type="text" placeholder="Enter email">
+        <button class="w3-button w3-block w3-teal w3-padding-16 w3-section w3-right">PAY <i class="fa fa-check"></i></button>
+        <button class="w3-button w3-red w3-section" onclick="document.getElementById('ticketModal').style.display='none'">Close <i class="fa fa-remove"></i></button>
+        <p class="w3-right">Need <a href="#" class="w3-text-blue">help?</a></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="w3-container w3-content w3-padding-64" style="max-width:800px" id="contact">
+    <h2 class="w3-wide w3-center">CONTACT</h2>
+    <p class="w3-opacity w3-center"><i>Se merita sa cumperi cursurile? Afla!</i></p>
+    <div class="w3-row w3-padding-32">
+      <div class="w3-col m6 w3-large w3-margin-bottom">
+        <i class="fa fa-map-marker" style="width:30px"></i> Oras, Tara<br>
+        <i class="fa fa-phone" style="width:30px"></i> Phone: +00 666555666<br>
+        <i class="fa fa-envelope" style="width:30px"> </i> Email: persoana@mail.com<br>
+      </div>
+      <div class="w3-col m6">
+        <form action="/action_page.php" target="_blank">
+          <div class="w3-row-padding" style="margin:0 -16px 8px -16px">
+            <div class="w3-half">
+              <input class="w3-input w3-border" type="text" placeholder="Name" required name="Name">
+            </div>
+            <div class="w3-half">
+              <input class="w3-input w3-border" type="text" placeholder="Email" required name="Email">
+            </div>
+          </div>
+          <input class="w3-input w3-border" type="text" placeholder="Message" required name="Message">
+          <button class="w3-button w3-black w3-section w3-right" type="submit">SEND</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+</div>
+
+
+<footer class="w3-container w3-padding-64 w3-center w3-opacity w3-light-grey w3-xlarge">
+  <i class="fa fa-facebook-official w3-hover-opacity"></i>
+  <i class="fa fa-instagram w3-hover-opacity"></i>
+  <i class="fa fa-snapchat w3-hover-opacity"></i>
+  <i class="fa fa-pinterest-p w3-hover-opacity"></i>
+  <i class="fa fa-twitter w3-hover-opacity"></i>
+  <i class="fa fa-linkedin w3-hover-opacity"></i>
+  <p class="w3-medium">Powered by</p>
+</footer>
+
+<script>
+var myIndex = 0;
+carousel();
+
+function carousel() {
+  var i;
+  var x = document.getElementsByClassName("mySlides");
+  for (i = 0; i < x.length; i++) {
+    x[i].style.display = "none";  
+  }
+  myIndex++;
+  if (myIndex > x.length) {myIndex = 1}    
+  x[myIndex-1].style.display = "block";  
+  setTimeout(carousel, 4000);    
+}
+
+// Used to toggle the menu on small screens when clicking on the menu button
+function myFunction() {
+  var x = document.getElementById("navDemo");
+  if (x.className.indexOf("w3-show") == -1) {
+    x.className += " w3-show";
+  } else { 
+    x.className = x.className.replace(" w3-show", "");
+  }
+}
+
+// When the user clicks anywhere outside of the modal, close it
+var modal = document.getElementById('ticketModal');
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+  }
+}
+</script>
+
+</body>
 </html>
