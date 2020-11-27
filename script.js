@@ -1,22 +1,23 @@
 "use strict";
-const canvasHeight=600;
-const canvasWidth=600;
+const Dc = document.getElementById("3Dcanvas");
+
+const canvasHeight=Dc.height;
+const canvasWidth=Dc.width;
 
 const speed = 5;
 const ray_num = 100;
-const check = 120;
+const check = 100;
 
-const RGBmultiplyer = 1.1;
+const RGBmultiplyer = 0.5;
 const resMult = 0.1;
 var fullScr = true;
 
-document.body.innerHTML += `<canvas id="3Dcanvas" width="${canvasHeight}" height="${canvasWidth}" style="background-color: black;">Your browser does not support HTML5</canvas>`
-//document.body.innerHTML += `<canvas id="canvas" width="${canvasHeight}" height="${canvasWidth}" style="background-color: black;">Your browser does not support HTML5</canvas>`
-const Dc = document.getElementById("3Dcanvas");
-//var c = document.getElementById("3Dcanvas");
+
+
+window.onscroll=function(){window.scrollTo(window.scrollX, window.scrollY);};
+
 
 const Dcanvas=document.getElementById("3Dcanvas").getContext("2d");
-//var canvas=document.getElementById("canvas").getContext("2d");
 
 Dc.requestPointerLock = Dc.requestPointerLock ||
 Dc.mozRequestPointerLock;
@@ -43,24 +44,24 @@ window.addEventListener("keydown", (event)=>
 function openFullscreen() {
     if (Dc.requestFullscreen) {
         Dc.requestFullscreen();
-    } else if (Dc.webkitRequestFullscreen) { /* Safari */
+    } else if (Dc.webkitRequestFullscreen) {
         Dc.webkitRequestFullscreen();
-    } else if (Dc.msRequestFullscreen) { /* IE11 */
+    } else if (Dc.msRequestFullscreen) {
         Dc.msRequestFullscreen();
     }
 }
 
 var map = [
-    [2,   2,   2,   2,   2,   2,   2,   2,   2,2],
-    [2,r(7),r(7),r(7),r(7),r(7),r(7),r(7),r(7),2],
-    [2,r(7),r(7),r(7),r(8),r(8),r(7),r(7),r(7),2],
-    [2,r(7),r(7),r(8),r(9),r(9),r(8),r(7),r(7),2],
-    [2,r(7),r(8),r(9),   0,   0,r(9),r(8),r(7),2],
-    [2,r(7),r(8),r(9),   0,   0,r(9),r(8),r(7),2],
-    [2,r(7),r(7),r(8),r(9),r(9),r(8),r(7),r(7),2],
-    [2,r(7),r(7),r(7),r(8),r(8),r(7),r(7),r(7),2],
-    [2,r(7),r(7),r(7),r(7),r(7),r(7),r(7),r(7),2],
-    [2,   2,   2 ,  2,   2,   2,   2,   2,   2,2]
+    [2,   2,   2,   2,   2,     2,    2,   2,   2,2],
+    [2,r(7),r(7),r(8),r(8),  r(8), r(7),r(7),r(7),2],
+    [2,r(7),r(7),r(8),r(9),  r(9), r(8),r(7),r(7),2],
+    [2,r(7),r(8),r(9),r(10),r(10), r(9),r(8),r(7),2],
+    [2,r(8),r(9),r(10),   0,    0,r(10),r(9),r(8),2],
+    [2,r(8),r(9),r(10),   0,    0,r(10),r(9),r(8),2],
+    [2,r(7),r(8),r(9),r(10),r(10), r(9),r(8),r(7),2],
+    [2,r(7),r(7),r(8),r(9),  r(9), r(8),r(7),r(7),2],
+    [2,r(7),r(7),r(7),r(8),  r(8), r(7),r(7),r(7),2],
+    [2,   2,   2 ,  2,   2,     2,    2,   2,   2,2]
 ];
 
 const XcheckMultiplyer = canvasHeight/map[0].length/16;
@@ -213,13 +214,12 @@ function drawPlayer(){
     }
 }
 function reDoPlayer(){
-//window.requestAnimationFrame(reDoPlayer);
+window.requestAnimationFrame(reDoPlayer);
 canvas.beginPath();
 canvas.fillStyle = 'black';
 canvas.arc(x, y, radius, 0, 2 * Math.PI, false);
 canvas.fill();
 }
-//window.requestAnimationFrame(reDoPlayer);
 
 function Distance(x1,x2,y1,y2){
     return Math.sqrt((x1-x2) * (x1-x2) + (y1-y2)*(y1-y2))
@@ -247,6 +247,8 @@ addEventListener("mousemove", function(event){
 window.requestAnimationFrame(Ray);
 
 function Ray(){
+
+    clearCanvas();
     window.requestAnimationFrame(Ray);
     for(var b = 0; b < ray_num; b++)
     {
@@ -268,16 +270,19 @@ function Ray(){
                     x,
                     y
                     };
-                    for(var p = 0; p <= check; p++)
-                    {
-                        ray.x = x + Math.cos(-(mouse.x - b) * Math.PI / 180) * p*XcheckMultiplyer;
-                        ray.y = y + Math.sin(-(mouse.x - b) * Math.PI / 180) * p*YcheckMultiplyer;
+                    var found = false;
+                    if(found==false){
+                        for(var p = 0; p <= check; p++)
+                        {
+                            ray.x = x + Math.cos(-(mouse.x - b) * Math.PI / 180) * p*XcheckMultiplyer;
+                            ray.y = y + Math.sin(-(mouse.x - b) * Math.PI / 180) * p*YcheckMultiplyer;
                         
-                        if(pointInside(wall, ray.x, ray.y)){
-                            distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall});
+                            if(pointInside(wall, ray.x, ray.y)){
+                                found = true;
+                                distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall});
+                           }
                         }
                     }
-                    
                 }
             }
         }
@@ -298,7 +303,6 @@ function Ray(){
 
 
         draw3D(dist, b);
-        /*drawRay(x,y,x + 300 * Math.cos(-(mouse.x - b) * Math.PI / 180),y + 300 * Math.sin(-(mouse.x - b) * Math.PI / 180));*/
     }
 }
 
@@ -371,28 +375,11 @@ function CPoints(angle, radius, distance){
     return {
         x: x + radius * Math.cos(angle * Math.PI / 180) * distance,
         y: y + radius * Math.sin(angle * Math.PI / 180) * distance
-    
     }
 }
 
 
-function line_intersect(x1, y1, x2, y2, x3, y3, x4, y4)
-{
-var ua, ub, denom = (y4 - y3)*(x2 - x1) - (x4 - x3)*(y2 - y1);
-if (denom == 0) {
-    return 0;
-}
-ua = ((x4 - x3)*(y1 - y3) - (y4 - y3)*(x1 - x3))/denom;
-ub = ((x2 - x1)*(y1 - y3) - (y2 - y1)*(x1 - x3))/denom;
-return {
-    x: x1 + ua * (x2 - x1),
-    y: y1 + ua * (y2 - y1),
-    seg1: ua >= 0 && ua <= 1,
-    seg2: ub >= 0 && ub <= 1
-}
-}   
-
 setInterval(drawPlayer, 20);
+//window.requestAnimationFrame(reDoPlayer);
 //setInterval(drawMap, 15);
-setInterval(Collide, 1);
-setInterval(clearCanvas, 100);
+setInterval(Collide, 20);
