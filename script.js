@@ -14,9 +14,6 @@ var fullScr = true;
 
 
 
-window.onscroll=function(){window.scrollTo(window.scrollX, window.scrollY);};
-
-
 const Dcanvas=document.getElementById("3Dcanvas").getContext("2d");
 
 Dc.requestPointerLock = Dc.requestPointerLock ||
