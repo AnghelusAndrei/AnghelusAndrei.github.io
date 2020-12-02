@@ -49,16 +49,16 @@ function openFullscreen() {
 }
 
 var map = [
-    [2,   2,   2,   2,   2,     2,    2,   2,   2,2],
-    [2,r(7),r(7),r(8),r(8),  r(8), r(7),r(7),r(7),2],
-    [2,r(7),r(7),r(8),r(9),  r(9), r(8),r(7),r(7),2],
-    [2,r(7),r(8),r(9),r(10),r(10), r(9),r(8),r(7),2],
-    [2,r(8),r(9),r(10),   0,    0,r(10),r(9),r(8),2],
-    [2,r(8),r(9),r(10),   0,    0,r(10),r(9),r(8),2],
-    [2,r(7),r(8),r(9),r(10),r(10), r(9),r(8),r(7),2],
-    [2,r(7),r(7),r(8),r(9),  r(9), r(8),r(7),r(7),2],
-    [2,r(7),r(7),r(7),r(8),  r(8), r(7),r(7),r(7),2],
-    [2,   2,   2 ,  2,   2,     2,    2,   2,   2,2]
+    [2,   2,   2,   2,   2,     2,    2,   2,   2,     2],
+    [2,r(10),r(11),r(13),r(13),r(13),r(11),r(11),r(10),2],
+    [2,r(10),r(11),r(13),r(14),r(14),r(13),r(11),r(11),2],
+    [2,r(11),r(13),r(14),r(15),r(15),r(14),r(13),r(11),2],
+    [2,r(13),r(14),r(15),    0,    0,r(15),r(14),r(13),2],
+    [2,r(13),r(14),r(15),    0,    0,r(15),r(14),r(13),2],
+    [2,r(11),r(13),r(14),r(15),r(15),r(14),r(13),r(11),2],
+    [2,r(11),r(11),r(13),r(14),r(14),r(13),r(11),r(11),2],
+    [2,r(10),r(11),r(11),r(13),r(13),r(11),r(10),r(10),2],
+    [2,   2,   2 ,  2,   2,     2,    2,   2,   2,     2]
 ];
 
 const XcheckMultiplyer = canvasHeight/map[0].length/16;
@@ -76,7 +76,7 @@ for(var i=0; i<height; i++)
 {
     for(var j=0;j<width;j++)
     {
-        if(map[i][j] >= 1 && map[i][j] <= 4){
+        if(map[i][j] >= 1 && map[i][j] <= 6){
             canvas.fillStyle='white';
             canvas.fillRect(canvasWidth / width * j, canvasHeight / height * i, canvasWidth / width,  canvasHeight / height);
             canvas.fill();
@@ -95,9 +95,9 @@ var collider = {
     width: 20,
     height: 20
 }
-function pointInside(wall, x, y)
+function pointInside(wall, x, y,s)
 {
-    return wall.x - 6 < x && wall.x + wall.width + 6 >x && wall.y - 6 <y && wall.y + wall.height + 6 > y
+    return wall.x - s < x && wall.x + wall.width + s >x && wall.y - s <y && wall.y + wall.height + s > y
 }
 function Collide(){
     const [width, height] = [map[0].length, map.length];
@@ -105,7 +105,7 @@ function Collide(){
     {
         for(var j=0;j<width;j++)
         {
-            if(map[i][j] >= 1  && map[i][j] <= 4){
+            if(map[i][j] >= 1  && map[i][j] <= 6){
                 var wall = {
                     x: canvasWidth / width * j,
                     y: canvasHeight / height * i,
@@ -113,7 +113,7 @@ function Collide(){
                     width: canvasWidth / width,
                 }
                 
-                if(pointInside(wall, x-5, y-5) || pointInside(wall, x-5 ,y+5) || pointInside(wall, x+5, y-5) || pointInside(wall, x+5, y+5)){
+                if(pointInside(wall, x-5, y-5,6) || pointInside(wall, x-5 ,y+5,6) || pointInside(wall, x+5, y-5,6) || pointInside(wall, x+5, y+5,6)){
                     x = lastX;
                     y = lastY;
                     tickX = x;
@@ -232,9 +232,11 @@ function rotate(velocity, angle){
 let mouse = {
 x: innerWidth / 2,
 y: innerHeight / 2
+
 }
 
 addEventListener("mousemove", function(event){
+    
     mouse.x -= event.movementX;
     mouse.y += event.movementY;
     
@@ -247,15 +249,17 @@ function Ray(){
 
     clearCanvas();
     window.requestAnimationFrame(Ray);
+
     for(var b = 0; b < ray_num; b++)
     {
-        const [width, height] = [map[0].length, map.length];
+        const [width, height]=[map[0].length, map.length];
         var distArray = [];
         for(var i=0; i<height; i++)
         {
             for(var j=0;j<width;j++)
             {
-                if(map[i][j] > 0 && map[i][j] <= 4){
+                if(map[i][j] > 0 && map[i][j] <= 6){
+
                     var wall = {
                         x: canvasWidth / width * j,
                         y: canvasHeight / height * i,
@@ -263,21 +267,25 @@ function Ray(){
                         width: canvasWidth / width,
                         color: map[i][j]
                     };
+
                     var ray = {
                     x,
                     y
                     };
+
                     var found = false;
-                    if(found==false){
-                        for(var p = 0; p <= check; p++)
-                        {
+
+                    for(var p = 0; p <= check; p++)
+                    {
+                        if(found==false){
                             ray.x = x + Math.cos(-(mouse.x - b) * Math.PI / 180) * p*XcheckMultiplyer;
                             ray.y = y + Math.sin(-(mouse.x - b) * Math.PI / 180) * p*YcheckMultiplyer;
                         
-                            if(pointInside(wall, ray.x, ray.y)){
+                            if(pointInside(wall, ray.x, ray.y,6)){
                                 found = true;
                                 distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall});
                            }
+
                         }
                     }
                 }
@@ -331,6 +339,7 @@ function draw3D(dist, b) {
 
     
     var Sdist = Rdist.toString();
+    
     switch(dist.wall.color)
     {
         case 1:Dcanvas.fillStyle = `rgb(${Sdist},0,0)`;
@@ -339,14 +348,18 @@ function draw3D(dist, b) {
         break;
         case 3:Dcanvas.fillStyle = `rgb(0,0,${Sdist})`;
         break;
-        case 4:Dcanvas.fillStyle = `rgb(${Sdist},${Sdist},${Sdist})`;
+        case 4:Dcanvas.fillStyle = `rgb(${Sdist},${Sdist},0)`;
+        break;
+        case 5:Dcanvas.fillStyle = `rgb(0,${Sdist},${Sdist})`;
+        break;
+        case 6:Dcanvas.fillStyle = `rgb(${Sdist},0,${Sdist})`;
         break;
     }
     
     
     Dcanvas.fillRect((
       canvasWidth/ray_num) * b,
-      canvasHeight/2+dist.dist/2,
+      canvasHeight/2+dist.dist/2-mouse.y,
       canvasWidth/ray_num,
       canvasHeight/2-dist.dist);
 
@@ -362,6 +375,7 @@ function degToRad(degrees){var pi = Math.PI;return degrees * (pi/180);}
 
 
 function clearCanvas(){
+
     Dcanvas.beginPath();
     Dcanvas.fillStyle = 'black';
     Dcanvas.fillRect(0, 0, canvasWidth, canvasHeight);
@@ -369,6 +383,7 @@ function clearCanvas(){
 }
 
 function CPoints(angle, radius, distance){
+
     return {
         x: x + radius * Math.cos(angle * Math.PI / 180) * distance,
         y: y + radius * Math.sin(angle * Math.PI / 180) * distance
