@@ -1,20 +1,26 @@
 "use strict";
 const Dc = document.getElementById("3Dcanvas");
 
-const canvasHeight=Dc.height;
-const canvasWidth=Dc.width;
-
 const speed = 5;
 const ray_num = 100;
 const check = 100;
 
-const RGBmultiplyer = 0.5;
+const RGBmultiplyer = 0.65;
+const dMult = 1.1;
 const resMult = 0.1;
 var fullScr = true;
 
-
+var j = 0;
 
 const Dcanvas=document.getElementById("3Dcanvas").getContext("2d");
+
+
+Dcanvas.canvas.width  = window.innerWidth;
+Dcanvas.canvas.height = window.innerHeight;
+
+
+const canvasHeight=Dc.height;
+const canvasWidth=Dc.width;
 
 Dc.requestPointerLock = Dc.requestPointerLock ||
 Dc.mozRequestPointerLock;
@@ -51,13 +57,13 @@ function openFullscreen() {
 var map = [
     [2,   2,   2,   2,   2,     2,    2,   2,   2,     2],
     [2,r(10),r(11),r(13),r(13),r(13),r(11),r(11),r(10),2],
-    [2,r(10),r(11),r(13),r(14),r(14),r(13),r(11),r(11),2],
-    [2,r(11),r(13),r(14),r(15),r(15),r(14),r(13),r(11),2],
-    [2,r(13),r(14),r(15),    0,    0,r(15),r(14),r(13),2],
-    [2,r(13),r(14),r(15),    0,    0,r(15),r(14),r(13),2],
-    [2,r(11),r(13),r(14),r(15),r(15),r(14),r(13),r(11),2],
-    [2,r(11),r(11),r(13),r(14),r(14),r(13),r(11),r(11),2],
-    [2,r(10),r(11),r(11),r(13),r(13),r(11),r(10),r(10),2],
+    [2,r(10),r(11),r(13),r(16),r(16),r(15),r(13),r(13),2],
+    [2,r(11),r(13),r(16),r(16),r(16),r(16),r(15),r(11),2],
+    [2,r(13),r(16),r(16),    0,    0,r(16),r(16),r(15),2],
+    [2,r(15),r(16),r(16),    0,    0,r(16),r(16),r(15),2],
+    [2,r(13),r(15),r(16),r(16),r(16),r(16),r(15),r(11),2],
+    [2,r(11),r(13),r(15),r(15),r(16),r(15),r(13),r(11),2],
+    [2,r(10),r(11),r(13),r(15),r(15),r(13),r(10),r(10),2],
     [2,   2,   2 ,  2,   2,     2,    2,   2,   2,     2]
 ];
 
@@ -150,6 +156,22 @@ function onKeyDown(event) {
     case 87: //w
         keyW = true;
         break;
+    case 32:
+        for(var i = 0; i <= 100; i++){
+            if(i<=35){
+                setTimeout(() => {j-=2},5);
+            }else if(i>35&&i<=50)
+            {
+                setTimeout(() => {j-=0.5},5);
+            }else if(i>50&&i<=65)
+            {
+                setTimeout(() => {j+=0.5},5);
+            }else if(i>65)
+            {
+                setTimeout(() => {j+=2},5);
+            }
+        }
+        break;    
     }
 }
 
@@ -231,7 +253,7 @@ function rotate(velocity, angle){
 }
 let mouse = {
 x: innerWidth / 2,
-y: innerHeight / 2
+y: innerHeight * 2
 
 }
 
@@ -282,14 +304,16 @@ function Ray(){
                             ray.y = y + Math.sin(-(mouse.x - b) * Math.PI / 180) * p*YcheckMultiplyer;
                         
                             if(pointInside(wall, ray.x, ray.y,6)){
+                                var lightLevel;
                                 found = true;
-                                distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall});
-                           }
-
-                        }
+                                if(ray.x<=wall.x){lightLevel = 0;}
+                                else{lightLevel = 0;}
+                                distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall, light:lightLevel});
+                            }
+                        }        
                     }
                 }
-            }
+            }   
         }
         var dist,CorrDist;
         var MIN=999999;
@@ -301,12 +325,8 @@ function Ray(){
                 dist=distArray[i];
 
                 dist.dist *= Math.cos(degToRad(Math.abs(ray_num/2-b)));
-
             }
-
         }
-
-
         draw3D(dist, b);
     }
 }
@@ -324,21 +344,28 @@ function drawRay(x1,y1,x2,y2) {
 function draw3D(dist, b) {
 
     Dcanvas.beginPath();
-    
 
-    if(dist.dist<0){
-        dist.dist = 0;
-    }else if(dist.dist>(canvasHeight/2)){
-        dist.dist = (canvasHeight/2);
+    var l = dist.light * 70;
+    
+    dist.dist=Math.round(dist.dist);
+
+    if(dist.dist>(canvasHeight/2)){
+        dist.dist = canvasHeight/2;
     }
-    var Rdist = 255-dist.dist/RGBmultiplyer;
+
+
+
+    var Rdist = 255-dist.dist/RGBmultiplyer-l;
     
     if(Rdist<0){
         Rdist = 0;
     }
-
     
     var Sdist = Rdist.toString();
+
+    var a = ['0',Sdist,'0'];
+
+    //Dcanvas.fillStyle = `rgb(${a[r(a.length)]},${a[r(a.length)]},${a[r(a.length)]})`;
     
     switch(dist.wall.color)
     {
@@ -352,17 +379,16 @@ function draw3D(dist, b) {
         break;
         case 5:Dcanvas.fillStyle = `rgb(0,${Sdist},${Sdist})`;
         break;
-        case 6:Dcanvas.fillStyle = `rgb(${Sdist},0,${Sdist})`;
+        case 6:Dcanvas.fillStyle = `rgb(${Sdist},${Sdist},${Sdist})`;
         break;
     }
     
     
-    Dcanvas.fillRect((
-      canvasWidth/ray_num) * b,
-      canvasHeight/2+dist.dist/2-mouse.y,
-      canvasWidth/ray_num,
-      canvasHeight/2-dist.dist);
-
+    Dcanvas.fillRect(
+        Math.round(canvasWidth/ray_num) * b,
+        canvasHeight+dist.dist/2-fixAng2(mouse.y)-j,
+        Math.round(canvasWidth/ray_num),
+        canvasHeight/2-dist.dist);
     Dcanvas.fill();
 }
 
@@ -370,6 +396,7 @@ function draw3D(dist, b) {
 function arrayMin(arr) { return Math.min.apply(Math, arr); }
 function arrayMax(arr) { return Math.max.apply(Math, arr); }
 function FixAng(a){ if(a>360){ a-=361;} if(a<1){ a+=361;} return a;}
+function fixAng2(a){ if(a>700){ a-=1401;} if(a<-700){ a+=1401;} return a;}
 function distance(ax,ay,bx,by,ang){ return Math.cos(Math.degToRad(ang))*(bx-ax)-sin(Math.degToRad(ang))*(by-ay);}
 function degToRad(degrees){var pi = Math.PI;return degrees * (pi/180);}
 
@@ -377,7 +404,17 @@ function degToRad(degrees){var pi = Math.PI;return degrees * (pi/180);}
 function clearCanvas(){
 
     Dcanvas.beginPath();
-    Dcanvas.fillStyle = 'black';
+    Dcanvas.fillStyle = `rgb(255,255,255)`;
+    Dcanvas.fillRect(0, 0, canvasWidth, Math.round(canvasHeight));
+    
+    var grd = Dcanvas.createLinearGradient(0, canvasHeight/2-fixAng2(mouse.y)-j, 0, canvasHeight*2-fixAng2(mouse.y)-j);
+    
+    grd.addColorStop(0, `rgb(0,0,0)`);
+    grd.addColorStop(.4, `rgb(0,0,0)`);
+    grd.addColorStop(.6, `rgb(0,0,0)`);
+    grd.addColorStop(1, `rgb(0,255,0)`);
+    
+    Dcanvas.fillStyle = grd;
     Dcanvas.fillRect(0, 0, canvasWidth, canvasHeight);
     Dcanvas.fill();
 }
