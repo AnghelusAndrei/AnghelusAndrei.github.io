@@ -25,9 +25,6 @@ Dcanvas.canvas.width  = window.innerWidth;
 Dcanvas.canvas.height = window.innerHeight;
 
 
-const canvasHeight=Dc.height;
-const canvasWidth=Dc.width;
-
 Dc.requestPointerLock = Dc.requestPointerLock ||
 Dc.mozRequestPointerLock;
 
