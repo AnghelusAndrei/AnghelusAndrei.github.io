@@ -15,10 +15,6 @@ var j = 0;
 const Dcanvas=document.getElementById("3Dcanvas").getContext("2d");
 
 
-Dcanvas.canvas.width  = window.innerWidth;
-Dcanvas.canvas.height = window.innerHeight;
-
-
 const canvasHeight=Dc.height;
 const canvasWidth=Dc.width;
 
