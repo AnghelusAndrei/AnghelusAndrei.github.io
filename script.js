@@ -11,7 +11,7 @@ const check = 100*(resolution/10);
 
 const jTime = 50;
 
-const RGBmultiplyer = 1;
+const RGBmultiplyer = 0.75;
 const dMult = 1.1;
 const resMult = 0.1;
 var fullScr = true;
