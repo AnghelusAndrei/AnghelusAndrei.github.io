@@ -2,10 +2,16 @@
 const Dc = document.getElementById("3Dcanvas");
 
 const speed = 5;
-const ray_num = 100;
-const check = 100;
 
-const RGBmultiplyer = 0.65;
+
+const ray_num = 100;
+const resolution = 25;
+const check = 100*(resolution/10);
+
+
+const jTime = 50;
+
+const RGBmultiplyer = 1;
 const dMult = 1.1;
 const resMult = 0.1;
 var fullScr = true;
@@ -13,6 +19,10 @@ var fullScr = true;
 var j = 0;
 
 const Dcanvas=document.getElementById("3Dcanvas").getContext("2d");
+
+
+Dcanvas.canvas.width  = window.innerWidth;
+Dcanvas.canvas.height = window.innerHeight;
 
 
 const canvasHeight=Dc.height;
@@ -63,8 +73,8 @@ var map = [
     [2,   2,   2 ,  2,   2,     2,    2,   2,   2,     2]
 ];
 
-const XcheckMultiplyer = canvasHeight/map[0].length/16;
-const YcheckMultiplyer = canvasHeight/map.length/16;
+const XcheckMultiplyer = canvasHeight/map[0].length/resolution;
+const YcheckMultiplyer = canvasHeight/map.length/resolution;
 
 
 
@@ -121,7 +131,7 @@ function Collide(){
                     tickX = x;
                     tickY = y;
                 }
-        }
+            }
         }
     }
 }
@@ -155,16 +165,16 @@ function onKeyDown(event) {
     case 32:
         for(var i = 0; i <= 100; i++){
             if(i<=35){
-                setTimeout(() => {j-=2},5);
+                setTimeout(() => {j-=2},jTime);
             }else if(i>35&&i<=50)
             {
-                setTimeout(() => {j-=0.5},5);
+                setTimeout(() => {j-=0.5},jTime);
             }else if(i>50&&i<=65)
             {
-                setTimeout(() => {j+=0.5},5);
+                setTimeout(() => {j+=0.5},jTime);
             }else if(i>65)
             {
-                setTimeout(() => {j+=2},5);
+                setTimeout(() => {j+=2},jTime);
             }
         }
         break;    
@@ -268,51 +278,53 @@ function Ray(){
     clearCanvas();
     window.requestAnimationFrame(Ray);
 
-    for(var b = 0; b < ray_num; b++)
+    for(var b = 0; b < ray_num; b+=0.5)
     {
         const [width, height]=[map[0].length, map.length];
         var distArray = [];
-        for(var i=0; i<height; i++)
+
+
+        var ray = {
+        x,
+        y
+        };
+
+        var found = false;
+
+        for(var p = 0; p <= check; p++)
         {
-            for(var j=0;j<width;j++)
-            {
-                if(map[i][j] > 0 && map[i][j] <= 6){
-
-                    var wall = {
-                        x: canvasWidth / width * j,
-                        y: canvasHeight / height * i,
-                        height: canvasHeight / height,
-                        width: canvasWidth / width,
-                        color: map[i][j]
-                    };
-
-                    var ray = {
-                    x,
-                    y
-                    };
-
-                    var found = false;
-
-                    for(var p = 0; p <= check; p++)
+            if(found==false){
+                ray.x = Math.round(x + Math.cos(-(mouse.x - b) * Math.PI / 180) * p*XcheckMultiplyer);
+                ray.y = Math.round(y + Math.sin(-(mouse.x - b) * Math.PI / 180) * p*YcheckMultiplyer);
+                            
+                for(var i=0; i<height; i++)
+                {
+                    for(var j=0;j<width;j++)
                     {
-                        if(found==false){
-                            ray.x = x + Math.cos(-(mouse.x - b) * Math.PI / 180) * p*XcheckMultiplyer;
-                            ray.y = y + Math.sin(-(mouse.x - b) * Math.PI / 180) * p*YcheckMultiplyer;
-                        
+                        if(map[i][j] > 0 && map[i][j] <= 6){
+        
+                            var wall = {
+                                x: canvasWidth / width * j,
+                                y: canvasHeight / height * i,
+                                height: canvasHeight / height,
+                                width: canvasWidth / width,
+                                color: map[i][j]
+                            };
+                            
                             if(pointInside(wall, ray.x, ray.y,6)){
-                                var lightLevel;
+                                //var lightLevel;
                                 found = true;
-                                if(ray.x<=wall.x){lightLevel = 0;}
-                                else{lightLevel = 0;}
-                                distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall, light:lightLevel});
+                                //if(ray.x<=wall.x){lightLevel = 0;}
+                                //else{lightLevel = 1;}
+                                distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall/*, light:lightLevel*/});
                             }
                         }        
                     }
                 }
             }   
         }
-        var dist,CorrDist;
-        var MIN=999999;
+        var dist;
+        var MIN=canvasHeight;
         for(var i=0;i<distArray.length;i++)
         {
             if(distArray[i].dist<MIN) 
@@ -341,17 +353,17 @@ function draw3D(dist, b) {
 
     Dcanvas.beginPath();
 
-    var l = dist.light * 70;
-    
-    dist.dist=Math.round(dist.dist);
+    dist.dist = Math.round(dist.dist);
 
-    if(dist.dist>(canvasHeight/2)){
-        dist.dist = canvasHeight/2;
+    //var l = dist.light * 70;
+
+    if(dist.dist>canvasHeight/2){
+        dist.dist = Math.round(canvasHeight/2);
     }
 
 
 
-    var Rdist = 255-dist.dist/RGBmultiplyer-l;
+    var Rdist = Math.round(255-dist.dist/RGBmultiplyer/*-l*/);
     
     if(Rdist<0){
         Rdist = 0;
@@ -392,7 +404,7 @@ function draw3D(dist, b) {
 function arrayMin(arr) { return Math.min.apply(Math, arr); }
 function arrayMax(arr) { return Math.max.apply(Math, arr); }
 function FixAng(a){ if(a>360){ a-=361;} if(a<1){ a+=361;} return a;}
-function fixAng2(a){ if(a>700){ a-=1401;} if(a<-700){ a+=1401;} return a;}
+function fixAng2(a){ if(a>canvasHeight*2){ a-=canvasHeight*3;} if(a<-canvasHeight){ a+=canvasHeight*3;} return a;}
 function distance(ax,ay,bx,by,ang){ return Math.cos(Math.degToRad(ang))*(bx-ax)-sin(Math.degToRad(ang))*(by-ay);}
 function degToRad(degrees){var pi = Math.PI;return degrees * (pi/180);}
 
