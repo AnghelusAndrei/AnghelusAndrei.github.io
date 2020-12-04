@@ -409,10 +409,10 @@ function clearCanvas(){
     
     var grd = Dcanvas.createLinearGradient(0, canvasHeight/2-fixAng2(mouse.y)-j, 0, canvasHeight*2-fixAng2(mouse.y)-j);
     
-    grd.addColorStop(0, `rgb(0,0,0)`);
-    grd.addColorStop(.4, `rgb(0,0,0)`);
-    grd.addColorStop(.6, `rgb(0,0,0)`);
-    grd.addColorStop(1, `rgb(0,255,0)`);
+    grd.addColorStop(0, `rgb(255,255,255)`);
+    grd.addColorStop(.45, `rgb(0,0,0)`);
+    grd.addColorStop(.55, `rgb(0,0,0)`);
+    grd.addColorStop(1, `rgb(255,255,255)`);
     
     Dcanvas.fillStyle = grd;
     Dcanvas.fillRect(0, 0, canvasWidth, canvasHeight);
