@@ -14,12 +14,12 @@ const resMult = 0.1;
 var fullScr = true;
 
 document.body.innerHTML += `<canvas id="3Dcanvas" width="${canvasHeight}" height="${canvasWidth}" style="background-color: black;">Your browser does not support HTML5</canvas>`
-document.body.innerHTML += `<canvas id="canvas" width="${canvasHeight}" height="${canvasWidth}" style="background-color: black;">Your browser does not support HTML5</canvas>`
+//document.body.innerHTML += `<canvas id="canvas" width="${canvasHeight}" height="${canvasWidth}" style="background-color: black;">Your browser does not support HTML5</canvas>`
 const Dc = document.getElementById("3Dcanvas");
-var c = document.getElementById("3Dcanvas");
+//var c = document.getElementById("3Dcanvas");
 
 const Dcanvas=document.getElementById("3Dcanvas").getContext("2d");
-var canvas=document.getElementById("canvas").getContext("2d");
+//var canvas=document.getElementById("canvas").getContext("2d");
 
 Dc.requestPointerLock = Dc.requestPointerLock ||
 Dc.mozRequestPointerLock;
@@ -70,7 +70,7 @@ function r(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
-function drawMap(){
+/*function drawMap(){
 const [width, height] = [map[0].length, map.length]
 for(var i=0; i<height; i++)
 {
@@ -88,7 +88,7 @@ for(var i=0; i<height; i++)
     }
 }
 
-}
+}*/
 var collider = {
     x: x - 10,
     y: y - 10,
@@ -215,14 +215,14 @@ function drawPlayer(){
     y=cY;
     }
 }
-function reDoPlayer(){
+/*function reDoPlayer(){
 window.requestAnimationFrame(reDoPlayer);
 canvas.beginPath();
 canvas.fillStyle = 'black';
 canvas.arc(x, y, radius, 0, 2 * Math.PI, false);
 canvas.fill();
 }
-window.requestAnimationFrame(reDoPlayer);
+window.requestAnimationFrame(reDoPlayer);*/
 
 function Distance(x1,x2,y1,y2){
     return Math.sqrt((x1-x2) * (x1-x2) + (y1-y2)*(y1-y2))
@@ -318,14 +318,14 @@ function Ray(){
                         if(pointInside(wall, xCheck.x, xCheck.y)){
                             ray.x = xCheck.x;
                             ray.y = xCheck.y;
-                            drawRay(x,y,ray.x,ray.y);
+                            //drawRay(x,y,ray.x,ray.y);
                             distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall, l:50});
                             xFound = true;
                         }
                         if(pointInside(wall, yCheck.x, yCheck.y)){
                             ray.x = yCheck.x;
                             ray.y = yCheck.y;
-                            drawRay(x,y,ray.x,ray.y);
+                            //drawRay(x,y,ray.x,ray.y);
                             distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall, l:0});
                             yFound = true;
                         }
@@ -359,13 +359,13 @@ function Ray(){
 
 
 
-function drawRay(x1,y1,x2,y2) {
+/*function drawRay(x1,y1,x2,y2) {
     canvas.beginPath();
     canvas.strokeStyle = 'red';
     canvas.moveTo(x1,y1);
     canvas.lineTo(x2,y2);   
     canvas.stroke();
-}
+}*/
 
 function draw3D(dist, b) {
     Dcanvas.beginPath();
@@ -443,6 +443,6 @@ function CPoints(angle, radius, distance){
 }
 
 setInterval(drawPlayer, 20);
-setInterval(drawMap, 15);
+//setInterval(drawMap, 15);
 setInterval(Collide, 1);
 
