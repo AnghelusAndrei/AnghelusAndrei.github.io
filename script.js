@@ -27,6 +27,8 @@ Dc.height = window.innerHeight;
 const canvasHeight=Dc.height;
 const canvasWidth=Dc.width;
 
+var j = canvasHeight/2+canvasHeight/4;
+
 Dc.addEventListener("click", (ev)=>
 {
     if(fullScr == false){Dc.style.cursor = 'none';}
