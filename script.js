@@ -1,28 +1,25 @@
 "use strict";
-const Dc = document.getElementById("3Dcanvas");
 
-const speed = 5;
+const canvasHeight=600;
+const canvasWidth=600;
 
-
-const ray_num = 100;
-const resolution = 25;
-const check = 100*(resolution/10);
-
-
-const jTime = 50;
-
-const RGBmultiplyer = 0.75;
-const dMult = 1.1;
+const speed = 3;
+const ray_num = 60;
+const check = 120;
+const divider = 4;
+const adder = 1/divider;
+const checkMultiplyer = 3;
+const RGBmultiplyer = 1.1;
 const resMult = 0.1;
 var fullScr = true;
 
-var j = 0;
+document.body.innerHTML += `<canvas id="3Dcanvas" width="${canvasHeight}" height="${canvasWidth}" style="background-color: black;">Your browser does not support HTML5</canvas>`
+document.body.innerHTML += `<canvas id="canvas" width="${canvasHeight}" height="${canvasWidth}" style="background-color: black;">Your browser does not support HTML5</canvas>`
+const Dc = document.getElementById("3Dcanvas");
+var c = document.getElementById("3Dcanvas");
 
 const Dcanvas=document.getElementById("3Dcanvas").getContext("2d");
-
-
-const canvasHeight=Dc.height;
-const canvasWidth=Dc.width;
+var canvas=document.getElementById("canvas").getContext("2d");
 
 Dc.requestPointerLock = Dc.requestPointerLock ||
 Dc.mozRequestPointerLock;
@@ -49,30 +46,25 @@ window.addEventListener("keydown", (event)=>
 function openFullscreen() {
     if (Dc.requestFullscreen) {
         Dc.requestFullscreen();
-    } else if (Dc.webkitRequestFullscreen) {
+    } else if (Dc.webkitRequestFullscreen) { /* Safari */
         Dc.webkitRequestFullscreen();
-    } else if (Dc.msRequestFullscreen) {
+    } else if (Dc.msRequestFullscreen) { /* IE11 */
         Dc.msRequestFullscreen();
     }
 }
 
 var map = [
-    [2,   2,   2,   2,   2,     2,    2,   2,   2,     2],
-    [2,r(10),r(11),r(13),r(13),r(13),r(11),r(11),r(10),2],
-    [2,r(10),r(11),r(13),r(16),r(16),r(15),r(13),r(13),2],
-    [2,r(11),r(13),r(16),r(16),r(16),r(16),r(15),r(11),2],
-    [2,r(13),r(16),r(16),    0,    0,r(16),r(16),r(15),2],
-    [2,r(15),r(16),r(16),    0,    0,r(16),r(16),r(15),2],
-    [2,r(13),r(15),r(16),r(16),r(16),r(16),r(15),r(11),2],
-    [2,r(11),r(13),r(15),r(15),r(16),r(15),r(13),r(11),2],
-    [2,r(10),r(11),r(13),r(15),r(15),r(13),r(10),r(10),2],
-    [2,   2,   2 ,  2,   2,     2,    2,   2,   2,     2]
+    [2,   2,   2,   2,   2,   2,   2,   2,   2,2],
+    [2,r(7),r(7),r(7),r(7),r(7),r(7),r(7),r(7),2],
+    [2,r(7),r(7),r(7),r(8),r(8),r(7),r(7),r(7),2],
+    [2,r(7),r(7),r(8),r(9),r(9),r(8),r(7),r(7),2],
+    [2,r(7),r(8),r(9),   0,   0,r(9),r(8),r(7),2],
+    [2,r(7),r(8),r(9),   0,   0,r(9),r(8),r(7),2],
+    [2,r(7),r(7),r(8),r(9),r(9),r(8),r(7),r(7),2],
+    [2,r(7),r(7),r(7),r(8),r(8),r(7),r(7),r(7),2],
+    [2,r(7),r(7),r(7),r(7),r(7),r(7),r(7),r(7),2],
+    [2,   2,   2 ,  2,   2,   2,   2,   2,   2,2]
 ];
-
-const XcheckMultiplyer = canvasHeight/map[0].length/resolution;
-const YcheckMultiplyer = canvasHeight/map.length/resolution;
-
-
 
 function r(max) {
     return Math.floor(Math.random() * Math.floor(max));
@@ -84,7 +76,7 @@ for(var i=0; i<height; i++)
 {
     for(var j=0;j<width;j++)
     {
-        if(map[i][j] >= 1 && map[i][j] <= 6){
+        if(map[i][j] >= 1 && map[i][j] <= 4){
             canvas.fillStyle='white';
             canvas.fillRect(canvasWidth / width * j, canvasHeight / height * i, canvasWidth / width,  canvasHeight / height);
             canvas.fill();
@@ -103,17 +95,22 @@ var collider = {
     width: 20,
     height: 20
 }
-function pointInside(wall, x, y,s)
+function pointInside(wall, x, y)
 {
-    return wall.x - s < x && wall.x + wall.width + s >x && wall.y - s <y && wall.y + wall.height + s > y
+    return wall.x - 0.01 < x && wall.x + wall.width + 0.01 > x && wall.y - 0.01 < y && wall.y + wall.height + 0.01 > y
 }
+function pointIs(wall, x, y)
+{
+    return wall.x == x || wall.x + wall.width == x || wall.y == y || wall.y + wall.height == y
+}
+
 function Collide(){
     const [width, height] = [map[0].length, map.length];
     for(var i=0; i<height; i++)
     {
         for(var j=0;j<width;j++)
         {
-            if(map[i][j] >= 1  && map[i][j] <= 6){
+            if(map[i][j] >= 1  && map[i][j] <= 4){
                 var wall = {
                     x: canvasWidth / width * j,
                     y: canvasHeight / height * i,
@@ -121,13 +118,13 @@ function Collide(){
                     width: canvasWidth / width,
                 }
                 
-                if(pointInside(wall, x-5, y-5,6) || pointInside(wall, x-5 ,y+5,6) || pointInside(wall, x+5, y-5,6) || pointInside(wall, x+5, y+5,6)){
+                if(pointInside(wall, x-5, y-5) || pointInside(wall, x-5 ,y+5) || pointInside(wall, x+5, y-5) || pointInside(wall, x+5, y+5)){
                     x = lastX;
                     y = lastY;
                     tickX = x;
                     tickY = y;
                 }
-            }
+        }
         }
     }
 }
@@ -158,22 +155,6 @@ function onKeyDown(event) {
     case 87: //w
         keyW = true;
         break;
-    case 32:
-        for(var i = 0; i <= 100; i++){
-            if(i<=35){
-                setTimeout(() => {j-=2},jTime);
-            }else if(i>35&&i<=50)
-            {
-                setTimeout(() => {j-=0.5},jTime);
-            }else if(i>50&&i<=65)
-            {
-                setTimeout(() => {j+=0.5},jTime);
-            }else if(i>65)
-            {
-                setTimeout(() => {j+=2},jTime);
-            }
-        }
-        break;    
     }
 }
 
@@ -210,26 +191,26 @@ function drawPlayer(){
     lastX = x;
     lastY = y;
     if (keyD == true) {
-    var cX = x + Math.cos(-(mouse.x - ray_num/2 - 90) * Math.PI / 180) * speed;
-    var cY = y + Math.sin(-(mouse.x - ray_num/2 - 90) * Math.PI / 180) * speed;
+    var cX = x + Math.cos(-(mouse.x - 90) * Math.PI / 180) * speed;
+    var cY = y + Math.sin(-(mouse.x - 90) * Math.PI / 180) * speed;
     x=cX;
     y=cY;
     }
     if (keyS == true) {
-    var cX = x + Math.cos(-(mouse.x - ray_num/2 - 180) * Math.PI / 180) * speed;
-    var cY = y + Math.sin(-(mouse.x - ray_num/2 - 180) * Math.PI / 180) * speed;
+    var cX = x + Math.cos(-(mouse.x - 180) * Math.PI / 180) * speed;
+    var cY = y + Math.sin(-(mouse.x - 180) * Math.PI / 180) * speed;
     x=cX;
     y=cY;
     }
     if (keyA == true) {
-    var cX = x + Math.cos(-(mouse.x - ray_num/2 + 90) * Math.PI / 180) * speed;
-    var cY = y + Math.sin(-(mouse.x - ray_num/2 + 90) * Math.PI / 180) * speed;
+    var cX = x + Math.cos(-(mouse.x + 90) * Math.PI / 180) * speed;
+    var cY = y + Math.sin(-(mouse.x + 90) * Math.PI / 180) * speed;
     x=cX;
     y=cY;
     }
     if (keyW == true) {
-    var cX = x + Math.cos(-(mouse.x - ray_num/2) * Math.PI / 180) * speed;
-    var cY = y + Math.sin(-(mouse.x - ray_num/2) * Math.PI / 180) * speed;
+    var cX = x + Math.cos(-(mouse.x) * Math.PI / 180) * speed;
+    var cY = y + Math.sin(-(mouse.x) * Math.PI / 180) * speed;
     x=cX;
     y=cY;
     }
@@ -241,6 +222,7 @@ canvas.fillStyle = 'black';
 canvas.arc(x, y, radius, 0, 2 * Math.PI, false);
 canvas.fill();
 }
+window.requestAnimationFrame(reDoPlayer);
 
 function Distance(x1,x2,y1,y2){
     return Math.sqrt((x1-x2) * (x1-x2) + (y1-y2)*(y1-y2))
@@ -254,73 +236,110 @@ function rotate(velocity, angle){
     return rotatedVelocities;
 }
 let mouse = {
-x: innerWidth / 2,
-y: innerHeight * 2
-
+x: 0,
+y: 0
 }
 
 addEventListener("mousemove", function(event){
-    
     mouse.x -= event.movementX;
     mouse.y += event.movementY;
-    
-    
 });
  
 window.requestAnimationFrame(Ray);
 
 function Ray(){
-
-    clearCanvas();
     window.requestAnimationFrame(Ray);
-
-    for(var b = 0; b < ray_num; b+=0.5)
+    clearCanvas();
+    for(var b = 0; b < ray_num; b+=adder)
     {
-        const [width, height]=[map[0].length, map.length];
+        const [width, height] = [map[0].length, map.length];
         var distArray = [];
-
-
-        var ray = {
-        x,
-        y
-        };
 
         var found = false;
 
-        for(var p = 0; p <= check; p++)
-        {
-            if(found==false){
-                ray.x = Math.round(x + Math.cos(-(mouse.x - b) * Math.PI / 180) * p*XcheckMultiplyer);
-                ray.y = Math.round(y + Math.sin(-(mouse.x - b) * Math.PI / 180) * p*YcheckMultiplyer);
-                            
-                for(var i=0; i<height; i++)
-                {
-                    for(var j=0;j<width;j++)
-                    {
-                        if(map[i][j] > 0 && map[i][j] <= 6){
+        var ray = {x: undefined,y: undefined};
+        var yCheck = {x: undefined,y: undefined};
+        var xCheck = {x: undefined,y: undefined};
+
+        var ang = 360-FixAng(mouse.x+(ray_num/2-b));
+
+        var xFound = false;
+        var yFound = false;
+
+        for(var offset = 0; offset < 11 && found == false; offset++){
+            var tile = {
+                x: offset*(canvasWidth / width),
+                y: offset*(canvasHeight / height)
+            };
+            var wall;
+            
+            //DDA
         
-                            var wall = {
-                                x: canvasWidth / width * j,
-                                y: canvasHeight / height * i,
-                                height: canvasHeight / height,
-                                width: canvasWidth / width,
-                                color: map[i][j]
-                            };
-                            
-                            if(pointInside(wall, ray.x, ray.y,6)){
-                                //var lightLevel;
-                                found = true;
-                                //if(ray.x<=wall.x){lightLevel = 0;}
-                                //else{lightLevel = 1;}
-                                distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall/*, light:lightLevel*/});
-                            }
-                        }        
+            if(ang < 90){ //down-right
+                yCheck.x = x+(canvasWidth-x-Math.floor((canvasWidth - x)/(canvasWidth / width))*(canvasWidth / width))+tile.x;
+                yCheck.y = y+((canvasWidth-x-Math.floor((canvasWidth - x)/(canvasWidth / width))*(canvasWidth / width))+tile.x)*Math.abs(Math.tan(degToRad(ang)));
+        
+                xCheck.y = y+(canvasHeight-y-Math.floor((canvasHeight - y)/(canvasHeight / height))*(canvasHeight / height))+tile.y;
+                xCheck.x = x+((canvasHeight-y-Math.floor((canvasHeight - y)/(canvasHeight / height))*(canvasHeight / height))+tile.y)*Math.abs(Math.tan(degToRad(90-ang)));
+            }else if(ang >= 90 && ang < 180){ //down-left
+                yCheck.x = Math.floor((x)/(canvasWidth / width))*(canvasWidth / width)-tile.x;
+                yCheck.y = y+(x-Math.floor((x)/(canvasWidth / width))*(canvasWidth / width)+tile.x)*Math.abs(Math.tan(degToRad(180-ang)));
+        
+                xCheck.y = y+(canvasHeight-y-Math.floor((canvasHeight - y)/(canvasHeight / height))*(canvasHeight / height))+tile.y;
+                xCheck.x = x-((canvasHeight-y-Math.floor((canvasHeight - y)/(canvasHeight / height))*(canvasHeight / height))+tile.y)*Math.abs(Math.tan(degToRad(ang-90)));
+            }else if(ang >= 180 && ang < 270){ //up-left
+                yCheck.x = Math.floor((x)/(canvasWidth / width))*(canvasWidth / width)-tile.x;
+                yCheck.y = y-(x-Math.floor((x)/(canvasWidth / width))*(canvasWidth / width)+tile.x)*Math.abs(Math.tan(degToRad(ang-180)));
+        
+                xCheck.y = y-(y-Math.floor((y)/(canvasHeight / height))*(canvasHeight / height))-tile.y;
+                xCheck.x = x-((y-Math.floor((y)/(canvasHeight / height))*(canvasHeight / height))+tile.y)*Math.abs(Math.tan(degToRad(270-ang)));
+            }else if(ang >= 270 && ang < 360){ //up-right
+                yCheck.x = x+(canvasWidth-x-Math.floor((canvasWidth - x)/(canvasWidth / width))*(canvasWidth / width))+tile.x;
+                yCheck.y = y-((canvasWidth-x-Math.floor((canvasWidth - x)/(canvasWidth / width))*(canvasWidth / width))+tile.x)*Math.abs(Math.tan(degToRad(360-ang)));
+        
+                xCheck.y = y-(y-Math.floor((y)/(canvasHeight / height))*(canvasHeight / height))-tile.y;
+                xCheck.x = x+((y-Math.floor((y)/(canvasHeight / height))*(canvasHeight / height))+tile.y)*Math.abs(Math.tan(degToRad(ang-270)));
+            }
+        
+        
+            //check
+            for(var i=0; i<height; i++)
+            {
+                for(var j=0;j<width;j++)
+                {
+                    if(map[i][j] > 0 && map[i][j] <= 4){
+                        wall = {
+                            x: canvasWidth / width * j,
+                            y: canvasHeight / height * i,
+                            height: canvasHeight / height,
+                            width: canvasWidth / width,
+                            color: map[i][j]
+                        };
+                        if(pointInside(wall, xCheck.x, xCheck.y)){
+                            ray.x = xCheck.x;
+                            ray.y = xCheck.y;
+                            drawRay(x,y,ray.x,ray.y);
+                            distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall, l:50});
+                            xFound = true;
+                        }
+                        if(pointInside(wall, yCheck.x, yCheck.y)){
+                            ray.x = yCheck.x;
+                            ray.y = yCheck.y;
+                            drawRay(x,y,ray.x,ray.y);
+                            distArray.push({dist:Distance(x,ray.x,y,ray.y), wall:wall, l:0});
+                            yFound = true;
+                        }
                     }
                 }
-            }   
+            }
+
+            if(xFound && yFound){
+                found == true;
+            }
         }
-        var dist;
-        var MIN=canvasHeight;
+
+        var dist,CorrDist;
+        var MIN=999999;
         for(var i=0;i<distArray.length;i++)
         {
             if(distArray[i].dist<MIN) 
@@ -328,12 +347,15 @@ function Ray(){
                 MIN = distArray[i].dist;
                 dist=distArray[i];
 
-                dist.dist *= Math.cos(degToRad(Math.abs(ray_num/2-b)));
+                dist.dist *= Math.cos(degToRad(ray_num/2-b));
             }
+
         }
+
         draw3D(dist, b);
     }
 }
+
 
 
 
@@ -346,31 +368,22 @@ function drawRay(x1,y1,x2,y2) {
 }
 
 function draw3D(dist, b) {
-
     Dcanvas.beginPath();
+    
 
-    dist.dist = Math.round(dist.dist);
-
-    //var l = dist.light * 70;
-
-    if(dist.dist>canvasHeight/2){
-        dist.dist = Math.round(canvasHeight/2);
+    if(dist.dist<0){
+        dist.dist = 0;
+    }else if(dist.dist>(canvasHeight/2)){
+        dist.dist = (canvasHeight/2);
     }
-
-
-
-    var Rdist = Math.round(255-dist.dist/RGBmultiplyer/*-l*/);
+    var Rdist = 255-dist.dist/RGBmultiplyer-dist.l;
     
     if(Rdist<0){
         Rdist = 0;
     }
+
     
     var Sdist = Rdist.toString();
-
-    var a = ['0',Sdist,'0'];
-
-    //Dcanvas.fillStyle = `rgb(${a[r(a.length)]},${a[r(a.length)]},${a[r(a.length)]})`;
-    
     switch(dist.wall.color)
     {
         case 1:Dcanvas.fillStyle = `rgb(${Sdist},0,0)`;
@@ -379,60 +392,57 @@ function draw3D(dist, b) {
         break;
         case 3:Dcanvas.fillStyle = `rgb(0,0,${Sdist})`;
         break;
-        case 4:Dcanvas.fillStyle = `rgb(${Sdist},${Sdist},0)`;
-        break;
-        case 5:Dcanvas.fillStyle = `rgb(0,${Sdist},${Sdist})`;
-        break;
-        case 6:Dcanvas.fillStyle = `rgb(${Sdist},${Sdist},${Sdist})`;
+        case 4:Dcanvas.fillStyle = `rgb(${Sdist},${Sdist},${Sdist})`;
         break;
     }
     
     
+    var size = 25000/dist.dist;
+    var pos = canvasHeight-(size)/2+canvasHeight/4;
+
     Dcanvas.fillRect(
-        Math.round(canvasWidth/ray_num) * b,
-        canvasHeight+dist.dist/2-fixAng2(mouse.y)-j,
-        Math.round(canvasWidth/ray_num),
-        canvasHeight/2-dist.dist);
+        canvasWidth/ray_num * b,
+        pos-canvasHeight/2-canvasHeight/4,
+        canvasWidth/ray_num/divider,
+        size);
     Dcanvas.fill();
 }
 
 
 function arrayMin(arr) { return Math.min.apply(Math, arr); }
 function arrayMax(arr) { return Math.max.apply(Math, arr); }
-function FixAng(a){ if(a>360){ a-=361;} if(a<1){ a+=361;} return a;}
-function fixAng2(a){ if(a>canvasHeight*2){ a-=canvasHeight*3;} if(a<-canvasHeight){ a+=canvasHeight*3;} return a;}
+function FixAng(ang){         
+    if(ang>360)
+    {
+        var mult = Math.ceil(ang/360);
+        ang = (360*mult)-ang;
+    } 
+    if(ang<0)
+    {
+        var ap = Math.abs(ang);
+        var mult = Math.ceil(ap/360);
+        ang = (360*mult)-ap;
+    } return ang;}
 function distance(ax,ay,bx,by,ang){ return Math.cos(Math.degToRad(ang))*(bx-ax)-sin(Math.degToRad(ang))*(by-ay);}
 function degToRad(degrees){var pi = Math.PI;return degrees * (pi/180);}
 
 
 function clearCanvas(){
-
     Dcanvas.beginPath();
-    Dcanvas.fillStyle = `rgb(255,255,255)`;
-    Dcanvas.fillRect(0, 0, canvasWidth, Math.round(canvasHeight));
-    
-    var grd = Dcanvas.createLinearGradient(0, canvasHeight/2-fixAng2(mouse.y)-j, 0, canvasHeight*2-fixAng2(mouse.y)-j);
-    
-    grd.addColorStop(0, `rgb(255,255,255)`);
-    grd.addColorStop(.45, `rgb(0,0,0)`);
-    grd.addColorStop(.55, `rgb(0,0,0)`);
-    grd.addColorStop(1, `rgb(255,255,255)`);
-    
-    Dcanvas.fillStyle = grd;
+    Dcanvas.fillStyle = 'black';
     Dcanvas.fillRect(0, 0, canvasWidth, canvasHeight);
     Dcanvas.fill();
 }
 
 function CPoints(angle, radius, distance){
-
     return {
         x: x + radius * Math.cos(angle * Math.PI / 180) * distance,
         y: y + radius * Math.sin(angle * Math.PI / 180) * distance
+    
     }
 }
 
-
 setInterval(drawPlayer, 20);
-//window.requestAnimationFrame(reDoPlayer);
-//setInterval(drawMap, 15);
-setInterval(Collide, 20);
+setInterval(drawMap, 15);
+setInterval(Collide, 1);
+
