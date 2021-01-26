@@ -430,12 +430,23 @@ function distance(ax,ay,bx,by,ang){ return Math.cos(Math.degToRad(ang))*(bx-ax)-
 function degToRad(degrees){var pi = Math.PI;return degrees * (pi/180);}
 
 
-function clearCanvas(){
-    Dcanvas.beginPath();
-    Dcanvas.fillStyle = 'black';
-    Dcanvas.fillRect(0, 0, canvasWidth, canvasHeight);
-    Dcanvas.fill();
-}
+    function clearCanvas(){
+    
+        Dcanvas.beginPath();
+        Dcanvas.fillStyle = `rgb(255,255,255)`;
+        Dcanvas.fillRect(0, 0, canvasWidth, Math.round(canvasHeight));
+        
+        var grd = Dcanvas.createLinearGradient(0, canvasHeight/2/*-fixAng2(mouse.y)*/-j, 0, canvasHeight*2/*-fixAng2(mouse.y)*/-j);
+        
+        grd.addColorStop(0, `rgb(0,0,0)`);
+        grd.addColorStop(.50, `rgb(10,10,10)`);
+        grd.addColorStop(.65, `rgb(190,190,190)`);
+        grd.addColorStop(1, `rgb(255,255,255)`);
+        
+        Dcanvas.fillStyle = grd;
+        Dcanvas.fillRect(0, 0, canvasWidth, canvasHeight);
+        Dcanvas.fill();
+    }
 
 function CPoints(angle, radius, distance){
     return {
