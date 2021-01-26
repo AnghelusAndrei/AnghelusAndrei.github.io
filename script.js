@@ -1,19 +1,16 @@
 "use strict";
 
-const canvasHeight=600;
-const canvasWidth=600;
-
 const speed = 3;
 const ray_num = 60;
 const check = 120;
 const divider = 4;
 const adder = 1/divider;
 const checkMultiplyer = 3;
-const RGBmultiplyer = 1.1;
+const RGBmultiplyer = 1.3;
 const resMult = 0.1;
 var fullScr = true;
 
-document.body.innerHTML += `<canvas id="3Dcanvas" width="${canvasHeight}" height="${canvasWidth}" style="background-color: black;">Your browser does not support HTML5</canvas>`
+//document.body.innerHTML += `<canvas id="3Dcanvas" width="${canvasHeight}" height="${canvasWidth}" style="background-color: black;">Your browser does not support HTML5</canvas>`
 //document.body.innerHTML += `<canvas id="canvas" width="${canvasHeight}" height="${canvasWidth}" style="background-color: black;">Your browser does not support HTML5</canvas>`
 const Dc = document.getElementById("3Dcanvas");
 //var c = document.getElementById("3Dcanvas");
@@ -23,6 +20,12 @@ const Dcanvas=document.getElementById("3Dcanvas").getContext("2d");
 
 Dc.requestPointerLock = Dc.requestPointerLock ||
 Dc.mozRequestPointerLock;
+
+Dc.width = window.innerWidth;
+Dc.height = window.innerHeight;
+
+const canvasHeight=Dc.height;
+const canvasWidth=Dc.width;
 
 Dc.addEventListener("click", (ev)=>
 {
