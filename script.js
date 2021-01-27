@@ -9,6 +9,7 @@ const checkMultiplyer = 3;
 const RGBmultiplyer = 1.3;
 const resMult = 0.1;
 var fullScr = true;
+const s = 35000;
 
 const grid = 500;
 const square = 50;
@@ -279,8 +280,8 @@ function Ray(){
 
         for(var offset = 0; offset < 11 && found == false; offset++){
             var tile = {
-                x: offset*(canvasWidth / width),
-                y: offset*(canvasHeight / height)
+                x: offset*(square),
+                y: offset*(square)
             };
             var wall;
             
@@ -320,8 +321,8 @@ function Ray(){
                 {
                     if(map[i][j] > 0 && map[i][j] <= 4){
                         wall = {
-                            x: grid / width * j,
-                            y: grid / height * i,
+                            x: square * j,
+                            y: square * i,
                             height: square,
                             width: square,
                             color: map[i][j]
