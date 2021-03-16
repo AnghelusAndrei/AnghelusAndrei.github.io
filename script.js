@@ -3,6 +3,7 @@
 const square = 50;
 const grid = square*20;
 velocityY = 1;
+var lastLoop = new Date();
 
 
 var playerZ = 25;
@@ -694,6 +695,8 @@ const gridFloor =
                 draw3D(dist, b);
             }
         }
+
+        gameLoop();
     }
 
 
@@ -968,6 +971,15 @@ const gridFloor =
         //walls draw end
 
     }
+
+function gameLoop() { 
+    var thisLoop = new Date();
+    var CurrFps = 1000 / (thisLoop - lastLoop);
+    lastLoop = thisLoop;
+
+    Dcanvas.font = "20px Arial";
+    Dcanvas.fillText("fps:"+Math.floor(CurrFps).toString(), 10, 50);
+}
 
 
 
